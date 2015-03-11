@@ -49,6 +49,12 @@ public class BookGui extends GuiScreenBook {
         
 		ColorData.calculateColorHeight( height );
 		ColorData.drawGui( this, fontRendererObj );
+		
+		if ( isEditingTitle() )
+		{
+			String lengthStr = ColorData.getLengthStr( getBookTitle().length(), 16, 8 );
+			fontRendererObj.drawString( lengthStr, ( width / 2 ) - 24, 72, 0 );
+		}
 	}
 	
 	@Override
@@ -115,6 +121,23 @@ public class BookGui extends GuiScreenBook {
 	    	}
     	}
     	//*/
+    }
+    
+    public String getBookTitle()
+    {
+    	try
+    	{
+	    	Class c = GuiScreenBook.class;
+	    	Field f = c.getDeclaredFields()[ 13 ];
+	    	f.setAccessible( true );
+	    	return ( String ) f.get( this );
+    	}
+    	catch ( Exception exception )
+    	{
+    		exception.printStackTrace();
+    	}
+    	
+    	return "";
     }
     
     public boolean isEditingTitle()

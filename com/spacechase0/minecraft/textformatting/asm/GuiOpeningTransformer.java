@@ -29,9 +29,9 @@ public class GuiOpeningTransformer implements IClassTransformer
 		if ( transformedName.equals( "net.minecraft.client.entity.EntityPlayerSP" ) )
 		{
 			TextFormattingLog.info( "Text Formatting using ASM to make sure our GUI is used..." );
-			//FileUtils.saveBytes( "EntityPlayerSP.pre.class", bytes );
+			FileUtils.saveBytes( "EntityPlayerSP.pre.class", bytes );
 			bytes = transformClass( name, transformedName, bytes );
-			//FileUtils.saveBytes( "EntityPlayerSP.post.class", bytes );
+			FileUtils.saveBytes( "EntityPlayerSP.post.class", bytes );
 		}
 		
 		return bytes;
@@ -85,18 +85,19 @@ public class GuiOpeningTransformer implements IClassTransformer
 			else if ( ins.getOpcode() == INVOKESPECIAL )
 			{
 				MethodInsnNode node = ( MethodInsnNode ) ins;
-				ObfuscatedMethod meth = ObfuscatedMethod.fromObf( node.owner, node.name, node.desc );
-				if ( meth.deobfType.equals( "net/minecraft/client/gui/inventory/GuiEditSign" ) )
+				TextFormattingLog.fine( (ObfuscatedMethod.fromObf(node.owner, node.name, node.desc)).toString() );
+				ObfuscatedType type = ObfuscatedType.fromObf( node.owner );
+				if ( type.deobfName.equals( "net/minecraft/client/gui/inventory/GuiEditSign" ) )
 				{
 					TextFormattingLog.info( "Found vanilla sign GUI <init>, changing to ours..." );
 					node.owner = "com/spacechase0/minecraft/textformatting/gui/SignGui";
 				}
-				else if ( meth.deobfType.equals( "net/minecraft/client/gui/GuiCommandBlock" ) )
+				else if ( type.deobfName.equals( "net/minecraft/client/gui/GuiCommandBlock" ) )
 				{
 					TextFormattingLog.info( "Found vanilla command block GUI <init>, changing to ours..." );
 					node.owner = "com/spacechase0/minecraft/textformatting/gui/CommandBlockGui";
 				}
-				else if ( meth.deobfType.equals( "net/minecraft/client/gui/GuiScreenBook" ) )
+				else if ( type.deobfName.equals( "net/minecraft/client/gui/GuiScreenBook" ) )
 				{
 					TextFormattingLog.info( "Found vanilla book GUI <init>, changing to ours..." );
 					node.owner = "com/spacechase0/minecraft/textformatting/gui/BookGui";

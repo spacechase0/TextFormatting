@@ -25,7 +25,7 @@ public class BookGuiTransformer implements IClassTransformer
 	{
 		if ( transformedName.equals( "net.minecraft.client.gui.GuiScreenBook" ) )
 		{
-			TextFormattingLog.info( "Text Formatting using ASM to remove the 50-page book and title length limit..." );
+			TextFormattingLog.info( "Text Formatting using ASM to remove the 50-page book limit..." );
 			bytes = transformClass( transformedName, bytes );
 		}
 		
@@ -70,13 +70,13 @@ public class BookGuiTransformer implements IClassTransformer
 					node.operand = Short.MAX_VALUE;
 				}
 				// "Remove" 16 page title limit
-				else if ( node.operand == 16 && !foundGl )
+				/*else if ( node.operand == 16 && !foundGl )
 				{
 					TextFormattingLog.info( "Found value 16 without OpenGL, assuming it to be the title limit." );
 					
 					node.setOpcode( SIPUSH );
 					node.operand = Short.MAX_VALUE;
-				}
+				}*/
 			}
 			else if ( ins.getOpcode() == INVOKESTATIC )
 			{
