@@ -1,0 +1,22 @@
+[
+{
+  "modid": "SC0_TextFormatting",
+  "name": "Text Formatting",
+  "description": "Formatting for signs, books, and command blocks. Also a few other tweaks.",
+  "version": "2.2.1",
+  "mcversion": "1.7.10",
+  "url": "http://spacechase0.com/minecraft/mods/sign-book-formatting/",
+  "updateUrl": "",
+  "authorList": [
+    "spacechase0"
+  ],
+  "credits": "spacechase0",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+    "required-after:SC0_SpaceCore"
+  ]
+}
+]
