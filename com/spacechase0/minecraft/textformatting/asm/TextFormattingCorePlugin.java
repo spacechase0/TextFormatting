@@ -15,6 +15,7 @@ public class TextFormattingCorePlugin implements IFMLLoadingPlugin
 			   {
 			   	"com.spacechase0.minecraft.textformatting.asm.GuiOpeningTransformer",
 			   	"com.spacechase0.minecraft.textformatting.asm.BookGuiTransformer",
+			   	"com.spacechase0.minecraft.textformatting.asm.BookValidTransformer",
 			   	"com.spacechase0.minecraft.textformatting.asm.AllowedCharactersTransformer"
 		       };
 	}

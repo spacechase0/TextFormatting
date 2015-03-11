@@ -18,14 +18,14 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.spacechase0.minecraft.textformatting.TextFormattingLog;
 
-public class BookGuiTransformer implements IClassTransformer
+public class BookValidTransformer implements IClassTransformer
 {
 	@Override
 	public byte[] transform( String name, String transformedName, byte[] bytes )
 	{
-		if ( transformedName.equals( "net.minecraft.client.gui.GuiScreenBook" ) )
+		if ( transformedName.equals( "net.minecraft.item.ItemEditableBook" ) )
 		{
-			TextFormattingLog.info( "Text Formatting using ASM to remove the 50-page book and title length limit..." );
+			TextFormattingLog.info( "Text Formatting using ASM to remove the title length limit..." );
 			bytes = transformClass( transformedName, bytes );
 		}
 		
@@ -54,36 +54,19 @@ public class BookGuiTransformer implements IClassTransformer
 	
 	private void transformMethod( MethodNode method )
 	{
-		boolean foundGl = false;
 		for ( int i = 0; i < method.instructions.size(); ++i )
 		{
 			AbstractInsnNode ins = method.instructions.get( i );
 			if ( ins.getOpcode() == BIPUSH )
 			{
-				// "Remove" 50 page limit
 				IntInsnNode node = ( IntInsnNode ) ins;
-				if ( node.operand == 50 )
-				{
-					TextFormattingLog.info( "Found value 50, assuming it to be the page limit." );
-					
-					node.setOpcode( SIPUSH );
-					node.operand = Short.MAX_VALUE;
-				}
 				// "Remove" 16 page title limit
-				else if ( node.operand == 16 && !foundGl )
+				if ( node.operand == 16 )
 				{
-					TextFormattingLog.info( "Found value 16 without OpenGL, assuming it to be the title limit." );
+					TextFormattingLog.info( "Found value 16, assuming it to be the title limit." );
 					
 					node.setOpcode( SIPUSH );
 					node.operand = Short.MAX_VALUE;
-				}
-			}
-			else if ( ins.getOpcode() == INVOKESTATIC )
-			{
-				MethodInsnNode node = ( MethodInsnNode ) ins;
-				if ( node.owner.contains( "lwjgl" ) )
-				{
-					foundGl = true;
 				}
 			}
 		}
