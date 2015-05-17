@@ -73,7 +73,7 @@ public class SignGui extends GuiEditSign
 		try
 		{
 			Class c = GuiEditSign.class;
-			Field f = c.getDeclaredField( ObfuscatedField.fromMcp( "I", "editLine" ).obfName );
+			Field f = c.getDeclaredField( ObfuscatedField.fromMcp( "net/minecraft/client/gui/inventory/GuiEditSign", "editLine" ).srgName );
 			f.setAccessible( true );
 			return ( Integer ) f.get( this );
 		}
