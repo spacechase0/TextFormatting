@@ -1,19 +1,18 @@
 package com.spacechase0.minecraft.textformatting;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.spacechase0.minecraft.spacecore.BaseMod;
 /*import com.spacechase0.minecraft.textformatting.block.CommandBlock;
 import com.spacechase0.minecraft.textformatting.item.SignItem;
 import com.spacechase0.minecraft.textformatting.item.WritableBookItem;
 import com.spacechase0.minecraft.textformatting.item.WrittenBookItem;*/
-
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 /* Notes
 
@@ -36,6 +35,8 @@ GuiScreenBook
 GuiChat ?
 
 */
+
+// 2.3.0 - Changed the way formatting works in signs (plan to improve and copy to others later). Updated for Minecraft 1.8.
 
 @Mod( modid = "SC0_TextFormatting", useMetadata = true, dependencies="required-after:SC0_SpaceCore" )
 public class TextFormatting extends BaseMod

@@ -1,8 +1,8 @@
 package com.spacechase0.minecraft.textformatting.asm;
 
 import static org.objectweb.asm.Opcodes.BIPUSH;
-import static org.objectweb.asm.Opcodes.SIPUSH;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.SIPUSH;
 
 import java.util.Iterator;
 

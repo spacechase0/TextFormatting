@@ -2,8 +2,8 @@ package com.spacechase0.minecraft.textformatting.asm;
 
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 @TransformerExclusions( { "com.spacechase0.minecraft.textformatting" } )
 public class TextFormattingCorePlugin implements IFMLLoadingPlugin
@@ -16,7 +16,8 @@ public class TextFormattingCorePlugin implements IFMLLoadingPlugin
 			   	"com.spacechase0.minecraft.textformatting.asm.GuiOpeningTransformer",
 			   	"com.spacechase0.minecraft.textformatting.asm.BookGuiTransformer",
 			   	"com.spacechase0.minecraft.textformatting.asm.BookValidTransformer",
-			   	"com.spacechase0.minecraft.textformatting.asm.AllowedCharactersTransformer"
+			   	"com.spacechase0.minecraft.textformatting.asm.AllowedCharactersTransformer",
+			   	"com.spacechase0.minecraft.textformatting.asm.CommandFilterTransformer"
 		       };
 	}
 

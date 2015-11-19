@@ -3,8 +3,6 @@ package com.spacechase0.minecraft.textformatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
-
 public class TextFormattingLog
 {
 	public static void info( String str )

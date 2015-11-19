@@ -5,8 +5,8 @@ import net.minecraft.client.gui.GuiTextField;
 
 public class UnfilteredTextField extends GuiTextField {
 
-	public UnfilteredTextField(FontRenderer par1FontRenderer, int par2, int par3, int par4, int par5) {
-		super(par1FontRenderer, par2, par3, par4, par5);
+	public UnfilteredTextField(int par0, FontRenderer par1FontRenderer, int par2, int par3, int par4, int par5) {
+		super(par0, par1FontRenderer, par2, par3, par4, par5);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -43,7 +43,7 @@ public class UnfilteredTextField extends GuiTextField {
             s1 = s1 + this.getText().substring(j);
         }
 
-        setTextPreserve( s1 );
+        setTextPreserve( s1 ); // What was this for?
         this.moveCursorBy(i - this.getSelectionEnd() + l);
     }
 	

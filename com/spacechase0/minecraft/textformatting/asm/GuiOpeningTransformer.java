@@ -15,9 +15,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 
-import com.spacechase0.minecraft.spacecore.asm.obf.ObfuscatedMethod;
 import com.spacechase0.minecraft.spacecore.asm.obf.ObfuscatedType;
-import com.spacechase0.minecraft.spacecore.util.FileUtils;
 import com.spacechase0.minecraft.textformatting.TextFormattingLog;
 
 public class GuiOpeningTransformer implements IClassTransformer

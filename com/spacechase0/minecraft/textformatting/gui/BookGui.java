@@ -1,5 +1,6 @@
 package com.spacechase0.minecraft.textformatting.gui;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import com.spacechase0.minecraft.spacecore.asm.obf.ObfuscatedMethod;
 import com.spacechase0.minecraft.textformatting.ColorData;
 
 public class BookGui extends GuiScreenBook {
@@ -28,17 +30,17 @@ public class BookGui extends GuiScreenBook {
         {
         	int bookImageWidth = 192;
         	int bookImageHeight = 192;
-        	buttonList.add(new GuiButton(ColorData.formatButtonId, width / 2 - 100, bookImageHeight + 20 + 4 + 4, ColorData.formatButtonStr));
+        	buttonList.add(new GuiButton(ColorData.FORMAT_BUTTON_ID, width / 2 - 100, bookImageHeight + 20 + 4 + 4, ColorData.FORMAT_BUTTON_STR));
         }
 	}
 	
 	@Override
-	public void actionPerformed( GuiButton button )
+	public void actionPerformed( GuiButton button ) throws IOException
     {
 		super.actionPerformed( button );
-		if ( button.enabled && button.id == ColorData.formatButtonId && unsigned )
+		if ( button.enabled && button.id == ColorData.FORMAT_BUTTON_ID && unsigned )
 		{
-			addToBook( ColorData.formatSymbol );
+			addToBook( ColorData.FORMAT_SYMBOL );
 		}
     }
 	
@@ -52,13 +54,13 @@ public class BookGui extends GuiScreenBook {
 		
 		if ( isEditingTitle() )
 		{
-			String lengthStr = ColorData.getLengthStr( getBookTitle().length(), 16, 8 );
+			String lengthStr = ColorData.getLengthStr( getBookTitle().length(), 32, 8 );
 			fontRendererObj.drawString( lengthStr, ( width / 2 ) - 24, 72, 0 );
 		}
 	}
 	
 	@Override
-    public void mouseClicked( int i, int j, int k )
+    public void mouseClicked( int i, int j, int k ) throws IOException
     {
 		if ( !unsigned )
 		{
@@ -69,7 +71,7 @@ public class BookGui extends GuiScreenBook {
 		char code = ColorData.getClickedCode( i, j, width );
 		if ( code != 'z' )
 		{
-			String str = ColorData.formatSymbol;
+			String str = ColorData.FORMAT_SYMBOL;
 			str += code;
 			
 			addToBook( str );
@@ -111,7 +113,7 @@ public class BookGui extends GuiScreenBook {
 	    	try
 	    	{
 		    	Class c = GuiScreenBook.class;
-		    	Method m = c.getDeclaredMethod( "func_146459_b", String.class );
+		    	Method m = c.getDeclaredMethod( ObfuscatedMethod.fromMcp( "net/minecraft/client/gui/GuiScreenBook" , "pageInsertIntoCurrent", "V(Ljava/lang/String;)" ).srgName, String.class );
 		    	m.setAccessible( true );
 		    	m.invoke( this, str );
 	    	}

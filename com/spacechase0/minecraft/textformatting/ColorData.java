@@ -1,48 +1,57 @@
 package com.spacechase0.minecraft.textformatting;
 
+import java.util.List;
+
+import com.spacechase0.minecraft.spacecore.asm.obf.ObfuscatedField;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ChatComponentStyle;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class ColorData
 {
-    public static int[] colors;
-    public static char[] colorCodes;
-    public static String[] formats;
-    public static char[] formatCodes;
+    public static final int[] COLORS;
+    public static final char[] COLOR_CODES;
+    public static final String[] FORMATS;
+    public static final char[] FORMAT_CODES;
 
-    public static int posX = 5;
-    public static int posY = 5;
+    public static final int POS_X = 5;
+    public static final int POS_Y = 5;
 
     public static int buttonWidth = 50;
     public static int buttonHeight = 20;
 
-    public static int padding = 3;
+    public static final int PADDING = 3;
+    public static final int OUTLINE = 2;
     
-    public static String formatButtonStr = "Insert Format Symbol";
-    public static int formatButtonId = 10;
+    public static final String FORMAT_BUTTON_STR = "Insert Format Symbol"; // TODO: Translate
+    public static final int FORMAT_BUTTON_ID = 10;
     
-    public static String formatSymbol = new String( new char[] { ( char ) 167 } );
+    public static final String FORMAT_SYMBOL = new String( new char[] { ( char ) 167 } );
     
     public static char getClickedCode( int x, int y, int width )
     {
-        int loopY = posY;
-        for ( int colorLoop = 0; colorLoop < 16; colorLoop += 1, loopY += buttonHeight + padding )
+        int loopY = POS_Y;
+        for ( int colorLoop = 0; colorLoop < 16; colorLoop += 1, loopY += buttonHeight + PADDING )
         {
-			if ( x >= posX && y >= loopY &&
-			     x < posX + buttonWidth &&
+			if ( x >= POS_X && y >= loopY &&
+			     x < POS_X + buttonWidth &&
 			     y < loopY + buttonHeight )
 			{
-				return colorCodes[ colorLoop ];
+				return COLOR_CODES[ colorLoop ];
 			}
 			
 			if ( colorLoop < 6 )
 			{
-				int px = width - buttonWidth - padding;
+				int px = width - buttonWidth - PADDING;
 				if ( x >= px && y >= loopY &&
 					 x < px + buttonWidth &&
 					 y < loopY + buttonHeight )
 				{
-					return formatCodes[ colorLoop ];
+					return FORMAT_CODES[ colorLoop ];
 				}
 			}
         }
@@ -50,17 +59,60 @@ public class ColorData
         return 'z';
     }
     
+    // Suddenly I wish I had references. Or even a mutable Integer. Ugh.
+    public static int doClickFlags( int x, int y, int width, int flags )
+    {
+        int loopY = POS_Y;
+        for ( int colorLoop = 0; colorLoop < 16; colorLoop += 1, loopY += buttonHeight + PADDING )
+        {
+			if ( x >= POS_X && y >= loopY &&
+			     x < POS_X + buttonWidth &&
+			     y < loopY + buttonHeight )
+			{
+				// Keep general style flags, but clear other colors and toggle the selected one.
+				if ( ( flags & ( 1 << colorLoop ) ) != 0 ) // If color already active
+				{
+					flags = ( flags & 0x3F0000 );
+				}
+				else
+				{
+					flags = ( flags & 0x3F0000 ) | ( 1 << colorLoop );
+				}
+			}
+			
+			if ( colorLoop < 6 )
+			{
+				int px = width - buttonWidth - PADDING;
+				if ( x >= px && y >= loopY &&
+					 x < px + buttonWidth &&
+					 y < loopY + buttonHeight )
+				{
+					if ( colorLoop == 5 )
+					{
+						flags = 0; // There is a format code for this...
+					}
+					else
+					{
+						flags ^= 1 << ( 16 + colorLoop );
+					}
+				}
+			}
+        }
+        
+        return flags;
+    }
+    
     public static void calculateColorHeight( int height )
     {
-    	buttonHeight = height - ( posY * 2 );
-        buttonHeight -= ( 16 - 1 ) * padding;
+    	buttonHeight = height - ( POS_Y * 2 );
+        buttonHeight -= ( 16 - 1 ) * PADDING;
         buttonHeight /= 16;
     }
     
     public static String getLengthStr( int length, int max, int col )
     {
-    	String str = formatSymbol;
-		str += colorCodes[ col ];
+    	String str = FORMAT_SYMBOL;
+		str += COLOR_CODES[ col ];
 		str += "(";
 		str += length;
 		str += "/" + max + ")";
@@ -68,84 +120,114 @@ public class ColorData
 		return str;
     }
     
+    // Traditional version
     public static void drawGui( GuiScreen gui, FontRenderer fontRenderer )
     {
-    	int loopY = posY;
-        for ( int colorLoop = 0; colorLoop < 16; colorLoop += 1, loopY += buttonHeight + padding )
+    	drawGui( gui, fontRenderer, 0 );
+    }
+    
+    // Toggle version
+    public static void drawGui( GuiScreen gui, FontRenderer fontRenderer, int flags )
+    {
+    	int loopY = POS_Y;
+        for ( int colorLoop = 0; colorLoop < 16; colorLoop += 1, loopY += buttonHeight + PADDING )
         {
-			gui.drawRect( posX, loopY, posX + buttonWidth, loopY + buttonHeight, colors[ colorLoop ] );
+			if ( ( flags & ( 1 << colorLoop ) ) != 0 )
+			{
+				gui.drawRect( POS_X - OUTLINE, loopY - OUTLINE, POS_X + buttonWidth + OUTLINE, loopY + buttonHeight + OUTLINE, COLORS[ colorLoop ] ^ 0x00FFFFFF );
+			}
+			gui.drawRect( POS_X, loopY, POS_X + buttonWidth, loopY + buttonHeight, COLORS[ colorLoop ] );
 			
 			if ( colorLoop < 6 )
 			{
-				int x = gui.width - buttonWidth - padding;
-				String str = formatSymbol;
-				str += formatCodes[ colorLoop ];
-				str += formats[ colorLoop ];
+				int x = gui.width - buttonWidth - PADDING;
+				String str = FORMAT_SYMBOL;
+				str += FORMAT_CODES[ colorLoop ];
+				str += FORMATS[ colorLoop ];
+
+				if ( ( flags & ( 1 << ( colorLoop + 16 ) ) ) != 0 )
+				{
+					gui.drawRect( x - OUTLINE, loopY - OUTLINE, x + buttonWidth + OUTLINE, loopY + buttonHeight + OUTLINE, 0xFF888888 );
+				}
 				
-				gui.drawRect( x, loopY, x + buttonWidth, loopY + buttonHeight, colors[ 15 ] );
-				fontRenderer.drawString( str, x + ( ( buttonWidth - fontRenderer.getStringWidth( formats[ colorLoop ] ) ) / 2 ), loopY + ( ( buttonHeight - 8 ) / 2 ), 0);
+				gui.drawRect( x, loopY, x + buttonWidth, loopY + buttonHeight, COLORS[ 15 ] );
+				fontRenderer.drawString( str, x + ( ( buttonWidth - fontRenderer.getStringWidth( FORMATS[ colorLoop ] ) ) / 2 ), loopY + ( ( buttonHeight - 8 ) / 2 ), 0);
 			}
 		}
     }
     
+    // Remove command-running capabilities from any components
+    // Returns itself for ease of injecting
+    public static IChatComponent removeCommandComponents( IChatComponent mainComp )
+    {
+    	List siblings = getChatComponentSiblings( ( ChatComponentStyle ) mainComp );
+    	for ( int i = 0; i < siblings.size(); ++i )
+    	{
+    		IChatComponent comp = ( IChatComponent ) siblings.get( i );
+    		removeCommandComponents( comp );
+    	}
+    	
+    	if ( mainComp.getChatStyle().getChatClickEvent() != null )
+    	{
+    		mainComp.getChatStyle().setChatClickEvent( null );
+    	}
+    	
+    	return mainComp;
+    }
+	
+	private static List getChatComponentSiblings( ChatComponentStyle comp )
+	{
+		String field = ObfuscatedField.fromMcp( "net/minecraft/util/ChatComponentStyle", "siblings" ).srgName;
+		return ( List ) ReflectionHelper.getPrivateValue( ChatComponentStyle.class, comp, field );
+	}
+    
     static 
     {
-        colors = new int[ 16 ];
-        colors[ 0 ] = 0xff000000;
-        colors[ 1 ] = 0xff0000BF;
-        colors[ 2 ] = 0xff00BF00;
-        colors[ 3 ] = 0xff00BFBF;
-        colors[ 4 ] = 0xffBF0000;
-        colors[ 5 ] = 0xffBF00BF;
-        colors[ 6 ] = 0xffffaa00;
-        colors[ 7 ] = 0xffBFBFBF;
-        colors[ 8 ] = 0xff404040;
-        colors[ 9 ] = 0xff4040ff;
-        colors[ 10 ] = 0xff49ff40;
-        colors[ 11 ] = 0xff40ffff;
-        colors[ 12 ] = 0xffff4040;
-        colors[ 13 ] = 0xffff40ff;
-        colors[ 14 ] = 0xffffff40;
-        colors[ 15 ] = 0xffffffff;
+        COLORS = new int[ 16 ];
+        COLORS[ 0 ] = 0xff000000;
+        COLORS[ 1 ] = 0xff0000BF;
+        COLORS[ 2 ] = 0xff00BF00;
+        COLORS[ 3 ] = 0xff00BFBF;
+        COLORS[ 4 ] = 0xffBF0000;
+        COLORS[ 5 ] = 0xffBF00BF;
+        COLORS[ 6 ] = 0xffffaa00;
+        COLORS[ 7 ] = 0xffBFBFBF;
+        COLORS[ 8 ] = 0xff404040;
+        COLORS[ 9 ] = 0xff4040ff;
+        COLORS[ 10 ] = 0xff49ff40;
+        COLORS[ 11 ] = 0xff40ffff;
+        COLORS[ 12 ] = 0xffff4040;
+        COLORS[ 13 ] = 0xffff40ff;
+        COLORS[ 14 ] = 0xffffff40;
+        COLORS[ 15 ] = 0xffffffff;
 		
-		colorCodes = new char[ 16 ];
+		COLOR_CODES = new char[ 16 ];
 		for ( int i = 0; i < 16; ++i )
 		{
 			if ( i < 10 )
 			{
-				colorCodes[ i ] = ( char )( '0' + i );
+				COLOR_CODES[ i ] = ( char )( '0' + i );
 			}
 			else
 			{
-				colorCodes[ i ] = ( char )( 'a' + ( i - 10 ) );
+				COLOR_CODES[ i ] = ( char )( 'a' + ( i - 10 ) );
 			}
 		}
 		
-		formats = new String[ 6 ];
-		formats[ 0 ] = "Random";
-		formats[ 1 ] = "Bold";
-		formats[ 2 ] = "Strike";
-		formats[ 3 ] = "Underline";
-		formats[ 4 ] = "Italics";
-		formats[ 5 ] = "Reset";
+		FORMATS = new String[ 6 ];
+		FORMATS[ 0 ] = "Random";
+		FORMATS[ 1 ] = "Bold";
+		FORMATS[ 2 ] = "Strike";
+		FORMATS[ 3 ] = "Underline";
+		FORMATS[ 4 ] = "Italics";
+		FORMATS[ 5 ] = "Reset";
 		
-		formatCodes = new char[ 6 ];
-		formatCodes[ 0 ] = 'k';
-		formatCodes[ 1 ] = 'l';
-		formatCodes[ 2 ] = 'm';
-		formatCodes[ 3 ] = 'n';
-		formatCodes[ 4 ] = 'o';
-		formatCodes[ 5 ] = 'r';
-
-		posX = 5;
-		posY = 5;
-
-		buttonWidth = 50;
-		buttonHeight = 20;
-
-		padding = 3;
-		
-		formatButtonStr = "Insert Format Symbol";
-		formatButtonId = 10;
+		FORMAT_CODES = new char[ 6 ];
+		FORMAT_CODES[ 0 ] = 'k';
+		FORMAT_CODES[ 1 ] = 'l';
+		FORMAT_CODES[ 2 ] = 'm';
+		FORMAT_CODES[ 3 ] = 'n';
+		FORMAT_CODES[ 4 ] = 'o';
+		FORMAT_CODES[ 5 ] = 'r';
     }
 }
