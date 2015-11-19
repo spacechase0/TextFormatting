@@ -50,12 +50,9 @@ public class CommandFilterTransformer implements IClassTransformer
 	        	}
 	        }
 	        
-	        System.out.println("saving");
 	        ClassWriter writer = new ClassWriter( ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS );
 	        classNode.accept( writer );
 	        bytes = writer.toByteArray();
-	        System.out.println("nowtofile");
-	        FileUtils.saveBytes( "test.class", bytes );
 		}
 		
 		return bytes;
