@@ -43,48 +43,38 @@ version = "${project.config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "
 println config.mc_version + "-" + config.forge_version
 // Setup the forge minecraft plugin data. Specify the preferred forge/minecraft version here
 minecraft {
-    version = config.mc_version + "-" + config.forge_version + "-" + config.mc_version
+    version = config.mc_version + "-" + config.forge_version
     mappings = config.mappings
     runDir = "run"
     replace '${mod_version}', project.config.mod_version
     makeObfSourceJar = false
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
 processResources {
     inputs.property "version", project.version
     inputs.property "mc_version", project.config.mc_version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        filter(ReplaceTokens, tokens: ['version': project.version, 'mc_version': project.config.mc_version])
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
     rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 version = "${project.minecraft.version}-${project.version}"
-def commonManifest = {
-    // attributes 'Main-Class': 'codechicken.lib.tool.Main'
-    // attributes 'FMLCorePlugin': 'codechicken.lib.asm.CCLCorePlugin'
-    // attributes 'FMLCorePluginContainsFMLMod': 'true'
-    // attributes 'FMLAT': 'ccl_at.cfg'
-}
 
 jar {
     classifier = 'universal'
-    manifest commonManifest
 }
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
     classifier = 'deobf'
-    manifest commonManifest
 }
 
 task srcJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
-    manifest commonManifest
 }
 
 task signJar(type: SignJar, dependsOn: reobfJar) {
@@ -123,18 +113,18 @@ uploadArchives {
                     project {
                         name project.archivesBaseName
                         packaging 'jar'
-                        description 'CodeChickenLib'
-                        url 'https://github.com/TheCBProject/CodeChickenLib'
+                        description 'TextFormatting'
+                        url 'https://github.com/spacechase0/TextFormatting'
 
                         scm {
-                            url 'https://github.com/TheCBProject/CodeChickenLib'
-                            connection 'scm:git:git://github.com/TheCBProject/CodeChickenLib.git'
-                            developerConnection 'scm:git:git@github.com:TheCBProject/CodeChickenLib.git'
+                            url 'https://github.com/spacechase0/TextFormatting'
+                            connection 'scm:git:git://github.com/spacechase0/TextFormatting.git'
+                            developerConnection 'scm:git:git@github.com:spacechase0/TextFormatting.git'
                         }
 
                         issueManagement {
                             system 'github'
-                            url 'https://github.com/TheCBProject/CodeChickenLib/issues'
+                            url 'https://github.com/spacechase0/TextFormatting/issues'
                         }
 
                         licenses {
@@ -147,8 +137,8 @@ uploadArchives {
 
                         developers {
                             developer {
-                                id 'chicken-bones'
-                                name 'chicken-bones'
+                                id 'spacechase0'
+                                name 'spacechase0'
                                 roles { role 'developer' }
                             }
                         }
